@@ -1,0 +1,13 @@
+{
+    "source_records": 119390,
+    "duplicates_removed": 31994,
+    "cleaned_records": 87396,
+    "source_columns": 32,
+    "cleaned_columns": 33,
+    "children_missing_imputed_as_zero": 4,
+    "company_missing_replaced": "Not Specified",
+    "agent_missing_replaced": "Not Specified",
+    "country_missing_replaced": "Unknown",
+    "remaining_missing_values": 0,
+    "remaining_duplicates": 0
+}
