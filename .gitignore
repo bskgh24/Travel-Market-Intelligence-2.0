@@ -1,0 +1,21 @@
+# Data files (do not commit raw or booking-level records)
+data/raw/*
+data/processed/*
+data/final/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/final/.gitkeep
+
+# Generated reports
+reports/*
+!reports/.gitkeep
+
+# Local Power BI files may contain embedded data
+powerbi/*.pbix
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env

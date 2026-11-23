@@ -1,79 +1,99 @@
 # Travel Market Intelligence 2.0
-
 **Turning Travel Data into Market Intelligence**
 
-## Project Overview
+An independent end-to-end hotel booking analytics portfolio project using Python, SQL Server and Power BI.
 
-Travel Market Intelligence 2.0 is an end-to-end hotel booking analytics project demonstrating how data analytics can support business decisions in the hospitality and travel industry.
+> This project uses a publicly available hotel-booking dataset. It is not Agoda data and is not affiliated with Agoda or any other travel company.
 
-The project uses Python, SQL Server and Power BI to transform hotel booking data into actionable business insights through data cleaning, feature engineering, data quality validation, KPI analysis, market segmentation and revenue trend analysis.
+## Project outcomes
 
-This is an independent portfolio project using a publicly available hotel booking dataset. It is not affiliated with or based on proprietary data from Agoda or any other travel company.
+| Measure | Recorded result |
+|---|---:|
+| Source records | 119,390 |
+| Exact duplicate rows removed | 31,994 |
+| Retained records | 87,396 |
+| Source columns | 32 |
+| Cleaned columns | 33 |
+| Feature-engineered columns | 45 |
+| Cancelled bookings | 24,025 |
+| Cancellation rate | 27.49% |
+| Average ADR | 106.34 |
+| Average stay | 3.63 nights |
+| Average lead time | 79.89 days |
 
-## Technology Stack
+Exact duplicate rows are not necessarily duplicate bookings. The source does not provide a unique booking identifier.
 
-- **Python:** Data profiling, data cleaning, feature engineering and data quality audits
-- **SQL Server:** Data staging, transformation, analytical queries and KPI validation
-- **Power BI:** Interactive dashboards, DAX measures and business intelligence reporting
-- **GitHub:** Project version control and documentation
+## Technology
 
-## Dataset
+- Python: profiling, cleaning, feature engineering and data-quality audits
+- SQL Server: staging, analytical queries and KPI validation
+- Power BI: three-page interactive dashboard and DAX measures
+- GitHub: version control and project documentation
 
-The project uses the publicly available Hotel Booking Demand dataset, covering City Hotel and Resort Hotel booking records.
+## Workflow
 
-- Original records: 119,390
-- Records retained after exact duplicate removal: 87,396
-- Original dataset columns: 32
-- Feature-engineered dataset columns: 45
+1. Place the original source file at `data/raw/hotel_bookings_raw.csv`.
+2. Install dependencies: `pip install -r requirements.txt`.
+3. Run `python/01_data_profiling.py`.
+4. Run `python/02_clean_and_engineer.py`.
+5. Load the resulting clean or feature-engineered CSV into SQL Server.
+6. Run the SQL scripts in numerical order after the required database/table exists.
+7. Build or refresh the Power BI report using the validated SQL model.
 
-The removal of exact duplicate rows is a data-cleaning operation. It does not establish that every removed row represented a duplicate booking, as the source does not provide a unique booking identifier.
+## Repository structure
 
-## Project Workflow
+```text
+Travel-Market-Intelligence-2.0/
+├── data/
+│   ├── raw/                 # Not committed: original public dataset
+│   ├── processed/           # Generated clean data
+│   └── final/               # Generated feature-engineered data
+├── python/
+│   ├── 01_data_profiling.py
+│   └── 02_clean_and_engineer.py
+├── sql/
+│   ├── 01_database_setup.sql
+│   ├── 02_business_kpi_analysis.sql
+│   ├── 03_data_quality_checks.sql
+│   └── 04_market_and_trend_analysis.sql
+├── documentation/
+│   └── project_methodology.md
+├── reports/                 # Generated profiling/audit outputs
+├── powerbi/                 # PBIX retained locally unless separately published
+└── requirements.txt
+```
 
-1. **Data Profiling:** Examine dataset structure, missing values, duplicate records and data distributions.
-2. **Data Cleaning:** Handle missing values and exact duplicate rows while preserving relevant data quality indicators.
-3. **Feature Engineering:** Create analytical features related to stay duration, guest composition, arrival dates, booking changes and special requests.
-4. **SQL Analytics:** Load the processed data into SQL Server and validate business KPIs.
-5. **Power BI Reporting:** Develop dashboards covering hotel performance, booking behaviour, market segments and revenue trends.
-6. **Data Quality Auditing:** Document transformation decisions and data quality observations.
+## Key analytical findings
 
-## Key Analytical Findings
+- City Hotel: 53,428 bookings; 16,049 cancellations; 30.04% cancellation rate; average ADR 110.99; average stay 3.15 nights.
+- Resort Hotel: 33,968 bookings; 7,976 cancellations; 23.48% cancellation rate; average ADR 99.03; average stay 4.39 nights.
+- Online TA is the largest market segment in the retained data (51,618 bookings); its recorded cancellation rate is 35.35%.
 
-- Total retained booking records: 87,396
-- Cancelled bookings: 24,025
-- Overall cancellation rate: 27.49%
-- Average daily rate (ADR): 106.34
-- Average stay duration: 3.63 nights
+## Revenue proxy disclaimer
 
-These figures describe the retained dataset and are not forecasts or audited financial results.
+The non-cancelled room-revenue proxy is calculated as `adr * total_nights`, excluding cancelled bookings and ADR values outside 0–1000. The recorded proxy is 22,976,780.14 (City Hotel 12,159,645.91; Resort Hotel 10,817,134.23). It is not audited or realised revenue. The dataset does not establish completed payments and the currency is not confirmed. Do not add a currency symbol or describe this measure as actual revenue.
 
-## Revenue Analysis Disclaimer
+## Data-quality caveats
 
-Revenue-related measures are analytical proxies derived from ADR and stay duration. They should not be interpreted as actual realised hotel revenue because the dataset does not establish completed payments or realised revenue.
+- 166 records have zero guests; preserve and investigate rather than automatically deleting them.
+- One ADR value is null.
+- One extreme ADR value of 5,400 was identified; flag and investigate rather than silently deleting it.
+- `Undefined` market segment contains only two records, both cancelled; avoid broad conclusions from this small group.
+- Associations in the data do not establish causation.
 
-## Repository Contents
+## Power BI report
 
-| File | Description |
-|---|---|
-| `overall_business_kpis.csv` | Overall business KPI summary |
-| `hotel_performance_kpis.csv` | Hotel-level performance summary |
-| `market_segment_kpis.csv` | Market segment analysis |
-| `monthly_booking_trends.csv` | Monthly booking trend summary |
-| `stage3_data_quality_audit.csv` | Data quality audit |
-| `stage3_transformation_audit.json` | Transformation audit details |
+The completed local report has three pages:
+1. Hotel Performance Overview
+2. Market & Booking Behaviour
+3. Revenue & Seasonal Trends
 
-## Project Status
+The PBIX is not included in this update package. Add it only if you explicitly intend to publish the report file.
 
-The Python data preparation and SQL KPI validation stages have been completed. Power BI dashboards have been developed as part of the project. Further documentation and report files will be added as the repository is organised.
+## Data and licensing
 
-## Data and Licensing
+The raw and booking-level processed datasets are intentionally excluded from this package. Check the original dataset provider's licence and terms before redistributing source or processed booking-level records.
 
-The original dataset is publicly available for research and educational use. Please refer to the original dataset provider's licence and terms before redistributing source or processed booking-level data.
+## Current status
 
-This repository currently publishes summary KPI and audit outputs rather than the full booking-level dataset.
-
-## Author
-
-Independent Data Analytics Portfolio Project
-
-**Focus Areas:** Data Analytics | Business Intelligence | Python | SQL Server | Power BI | Travel Analytics
+Python preparation, SQL KPI validation and the three-page Power BI dashboard have been completed in the working project. This package provides reproducible scripts and documentation to add to the GitHub repository. Run the scripts against your own local source data and SQL Server environment before treating a fresh run as independently reproduced.

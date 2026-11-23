@@ -1,54 +1,41 @@
 /*
-Project: Travel Market Intelligence 2.0
-Purpose: Validate core business KPIs.
-Source: dbo.fact_hotel_bookings_v2
+Core KPI validation against dbo.fact_hotel_bookings_v2.
+Run only after importing the 45-column feature-engineered CSV.
 */
-
 USE TravelMarketIntelligence;
 GO
 
--- 1. Overall booking KPIs
+-- Overall KPIs
 SELECT
     COUNT(*) AS Total_Bookings,
-    SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
-        AS Cancelled_Bookings,
-    CAST(
-        100.0 * SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
-        / NULLIF(COUNT(*), 0)
-        AS DECIMAL(10,2)
-    ) AS Cancellation_Rate_Percent,
-    AVG(adr) AS Average_ADR,
-    AVG(CAST(total_nights AS DECIMAL(10,2)))
-        AS Average_Stay_Nights
+    SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END) AS Cancelled_Bookings,
+    CAST(100.0 * SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
+         / NULLIF(COUNT(*), 0) AS DECIMAL(10,2)) AS Cancellation_Rate_Percent,
+    AVG(CAST(adr AS DECIMAL(18,4))) AS Average_ADR,
+    AVG(CAST(total_nights AS DECIMAL(10,2))) AS Average_Stay_Nights,
+    AVG(CAST(lead_time AS DECIMAL(10,2))) AS Average_Lead_Time_Days
 FROM dbo.fact_hotel_bookings_v2;
 GO
 
--- 2. Hotel-level performance
+-- Hotel-level KPIs
 SELECT
     hotel,
     COUNT(*) AS Total_Bookings,
-    SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
-        AS Cancelled_Bookings,
-    CAST(
-        100.0 * SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
-        / NULLIF(COUNT(*), 0)
-        AS DECIMAL(10,2)
-    ) AS Cancellation_Rate_Percent,
-    AVG(adr) AS Average_ADR,
-    AVG(CAST(total_nights AS DECIMAL(10,2)))
-        AS Average_Stay_Nights
+    SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END) AS Cancelled_Bookings,
+    CAST(100.0 * SUM(CASE WHEN is_canceled = 1 THEN 1 ELSE 0 END)
+         / NULLIF(COUNT(*), 0) AS DECIMAL(10,2)) AS Cancellation_Rate_Percent,
+    AVG(CAST(adr AS DECIMAL(18,4))) AS Average_ADR,
+    AVG(CAST(total_nights AS DECIMAL(10,2))) AS Average_Stay_Nights
 FROM dbo.fact_hotel_bookings_v2
 GROUP BY hotel
 ORDER BY Total_Bookings DESC;
 GO
 
--- 3. Revenue proxy: non-cancelled bookings
--- Excludes ADR values outside the 0–1000 range.
--- This is an analytical proxy, not audited realised revenue.
-
+-- Analytical revenue proxy: non-cancelled rows; ADR restricted to 0–1000.
+-- This is NOT audited or realised revenue. Currency is not confirmed.
 SELECT
     hotel,
-    SUM(adr * total_nights) AS Estimated_Revenue_Proxy
+    SUM(CAST(adr AS DECIMAL(18,4)) * total_nights) AS Estimated_Revenue_Proxy
 FROM dbo.fact_hotel_bookings_v2
 WHERE is_canceled = 0
   AND adr >= 0
